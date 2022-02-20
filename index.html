@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CP problems</title>
+    <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src="http://netdna.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+</head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="code.js"></script>
+<body>
+    <script>
+        var url = "https://docs.google.com/spreadsheets/d/1a-FhrbHxwedVLP8a42i-8N4MHpjgVgaKKOnMlpQI8-s/gviz/tq?tqx=out:json&tq";
+        var json;
+        $.get(url, function(data,status){
+                var jsonString = data.match(/(?<="table":).*(?=}\);)/g)[0];
+                json = JSON.parse(jsonString);
+            })  
+            .done(function() {
+                loadMain(json);
+                console.log(json);
+            })
+            .fail(function() {
+                document.getElementsByTagName("BODY")[0].innerHTML = "error";
+            });
+ 
+    </script>
+    loading...
+</body>
+</html>
