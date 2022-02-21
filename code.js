@@ -4,14 +4,20 @@ var name_index = 1;
 var hint_index = 6;
 var link_index = 3;
 var json ;
+let tableId = "";
+let pages = [];
+let currentPage = 0;
 
-
+//GUI
 function loadMain(json){
     json = json;
+    paginate();
     document.getElementsByTagName("BODY")[0].innerHTML = "";
     document.getElementsByTagName("BODY")[0].innerHTML += makeHeader();
     document.getElementsByTagName("BODY")[0].innerHTML += makeBody();
-
+    addPaginator();
+    showPage(0);
+    loadTable ();
 }
 
 function makeBody(){
@@ -57,7 +63,7 @@ function makeTable(json){
     var table = "";
     table = getTHead() + getTBody();
 
-    return '<table id="filter" class="table table-hover ">' + table + '</table>'
+    return '<table id="filter" class="table table-hover ">' + table + '</table><div id="paginator"></div>'
 }
 
 function getTHead(){
@@ -67,9 +73,14 @@ function getTHead(){
 }
 
 function getTBody(){
+    return "<tbody id='tbody'></tbody>";
+}
+
+function fillTBody(){
+    console.log(currentPage);
     var row = "";
-    for(var i=0; i<json["rows"].length; i++) row += getRow(i);
-    return "<tbody>" + row + "</tbody>";
+    for(var i=0; i<pages[currentPage].length; i++) row += getRow(pages[currentPage][i]);
+    document.getElementById("tbody").innerHTML = row;
 }
 
 function getRow(rowInd){
@@ -153,3 +164,83 @@ function makeHints(id){
     }
     return str;
 }
+
+
+//search
+
+
+
+
+//paging
+
+// Generates a set of arrays representing the organized data
+function paginate(){
+    pages = [];
+    let perPage = 1;
+    let pageNumber = 0;
+
+    for(var i =0; i<json.rows.length; i++){
+        if(!pages[pageNumber]){
+            pages[pageNumber] = [];
+        }
+
+        if(pages[pageNumber].length < perPage){
+            pages[pageNumber].push(i);
+            if(pages[pageNumber].length == perPage){
+                pageNumber++
+            }
+        }
+    };
+    console.log(pages);
+}
+
+// Generates the buttons for switching between pages
+function addPaginator(){
+    const paginatorContainer = document.querySelector('#paginator');
+    paginatorContainer.innerHTML = pages.length > 1 ? `<button onclick="previousPage()" class="paginator-button">&#10094</button>` : '';
+    for(let i = 0; i < pages.length; i++){
+        const paginatorButton = `<button onclick="showPage(${i})" class="paginator-button">${i+1}</button>`;
+        paginatorContainer.innerHTML += paginatorButton;
+    }
+    paginatorContainer.innerHTML = pages.length > 1 ? `${paginatorContainer.innerHTML}<button onclick="nextPage()" class="paginator-button">&#10095</button>` : '';
+}
+
+const nextPage = () => {
+    if(currentPage < pages.length-1){
+        showPage(currentPage+1)
+    }
+}
+const previousPage = () => {
+    if(currentPage > 0){showPage(currentPage-1)}; 
+}
+
+// Populates the table with the visible rows
+function showPage(page){
+    // clears the records of the tbody and iterates the records of the selected page to add new rows
+
+    // do nothing if no records
+    if(pages.length < 1 || page >= pages.length) return;
+
+    // adds a CSS class to the clicked page button
+    const paginatorButtons = document.querySelectorAll('#paginator button');
+    Array.from(paginatorButtons).forEach((button, index) => {
+        if(index-1 == page){
+            button.classList.add('btn-secondary');
+        }else{
+            button.classList.remove('btn-secondary');
+        }
+    });
+    currentPage = page;
+    fillTBody();
+
+    if(pages.length > 1){
+        paginatorButtons[pages.length+1].disabled = (page+1) == pages.length ? true : false;
+        paginatorButtons[0].disabled = page == 0 ? true : false;
+    }
+    
+}
+
+
+
+//sort
+
