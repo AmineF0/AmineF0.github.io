@@ -11,13 +11,15 @@ let currentPage = 0;
 //GUI
 function loadMain(json){
     json = json;
-    paginate();
+    //paginate();
     document.getElementsByTagName("BODY")[0].innerHTML = "";
     document.getElementsByTagName("BODY")[0].innerHTML += makeHeader();
     document.getElementsByTagName("BODY")[0].innerHTML += makeBody();
-    addPaginator();
-    showPage(0);
-    loadTable ();
+    //addPaginator();
+    //showPage(0);
+    fillTBody();
+    //loadTable ();
+    $("filter").DataTable();
 }
 
 function makeBody(){
@@ -79,7 +81,8 @@ function getTBody(){
 function fillTBody(){
     console.log(currentPage);
     var row = "";
-    for(var i=0; i<pages[currentPage].length; i++) row += getRow(pages[currentPage][i]);
+    //for(var i=0; i<pages[currentPage].length; i++) row += getRow(pages[currentPage][i]);
+    for(var i=0; i<json.rows.length; i++) row += getRow(i);
     document.getElementById("tbody").innerHTML = row;
 }
 
